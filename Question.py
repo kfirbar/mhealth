@@ -11,6 +11,7 @@ class Question:
         self.words = Counter()
         self.lemmas = Counter()
         self.contentLemmas = Counter()
+        self.contentWords = Counter()
         self.pos = Counter()
         self.number = Counter()
         self.person = Counter()
@@ -35,6 +36,7 @@ class Question:
                         self.pos[value] += 1
                         if value in ('noun', 'verb', 'adverb', 'adjective', 'participle'):
                             self.contentLemmas[lemma] += 1
+                            self.contentWords[attrs[0]] += 1
                     if key == 'Number':
                         self.number[value] += 1
                     if key == 'Person':
@@ -59,6 +61,7 @@ class Question:
         self.tense = self.tense + other.tense
         self.prefixes = self.prefixes + other.prefixes
         self.word_count = self.word_count + other.word_count
+        self.contentWords = self.contentWords + other.contentWords
 
 
     def printAll(self):

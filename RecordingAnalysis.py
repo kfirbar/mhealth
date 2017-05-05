@@ -91,16 +91,51 @@ def main(morphFileFolder, outputFolder, embeddings_file, positive_words, negatve
 
             questionSummaries[i].mergeWith(r.questions[i])
 
+    #specific metrics comparison across all questions
+    nouns = {}
+    verbs = {}
+    adjectives = {}
+    adverbs = {}
+    content = {}
+    person_1 = {}
+    person_2 = {}
+    person_3 = {}
 
+    for i, q in enumerate(questionSummaries):
+        norm_pos = counter2normDictionary(q.pos, q.word_count)
+        norm_per = counter2normDictionary(q.person, q.word_count)
+        nouns[i + 1] = norm_pos["noun"]
+        verbs[i + 1] = norm_pos["verb"]
+        adjectives[i + 1] = norm_pos["adjective"]
+        adverbs[i + 1] = norm_pos["adverb"]
+        content[i + 1] = norm_pos["noun"] + norm_pos["verb"] + norm_pos["adjective"] + norm_pos["adverb"]
+        person_1[i + 1] = norm_per["1"]
+        person_2[i + 1] = norm_per["2"]
+        person_3[i + 1] = norm_per["3"]
+
+    counter2hist(nouns, 'Nouns', outputFolder)
+    counter2hist(verbs, 'Verbs', outputFolder)
+    counter2hist(adjectives, 'Adjectives', outputFolder)
+    counter2hist(adverbs, 'Adverbs', outputFolder)
+    counter2hist(content, 'Content words', outputFolder)
+    counter2hist(person_1, '1st person', outputFolder)
+    counter2hist(person_2, '2nd person', outputFolder)
+    counter2hist(person_3, '3rd person', outputFolder)
+
+
+    #raw metrics for each question
+    sentiment_scores = {}
     for i, q in enumerate(questionSummaries):
         # Lemma cloud
         positive_score = calculate_sentiment_score(q.words, positive_df, e)
         negative_score = calculate_sentiment_score(q.words, negative_df, e)
 
-        print "Question " + `i` + ", Positive: " + `positive_score` + ", Negative: " + `negative_score` + ", Overall: " + `(positive_score/negative_score)`
-        buildWordCloud(q.contentLemmas, True, 'Question ' + `(i + 1)` + ' Lemma Cloud', outputFolder)
+        print "Question " + `(i + 1)` + ", Positive: " + `positive_score` + ", Negative: " + `negative_score` + ", Overall: " + `(positive_score/negative_score)`
+        sentiment_scores[i + 1] = (positive_score/negative_score)
+        buildWordCloud(q.contentWords, True, 'Question ' + `(i + 1)` + ' Content Word Cloud', outputFolder)
         counter2hist(counter2normDictionary(q.pos, q.word_count), 'Question ' + `(i + 1)` + ' POS', outputFolder)
         counter2hist(counter2normDictionary(q.person, q.word_count), 'Question ' + `(i + 1)` + ' Person', outputFolder)
 
+    counter2hist(sentiment_scores, 'Sentiment scores', outputFolder)
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
