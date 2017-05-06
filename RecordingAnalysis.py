@@ -112,6 +112,7 @@ def main(morphFileFolder, outputFolder, embeddings_file, positive_words, negatve
         person_1[i + 1] = norm_per["1"]
         person_2[i + 1] = norm_per["2"]
         person_3[i + 1] = norm_per["3"]
+        print "Question " + `(i + 1)` + ", avg word count: " + `(q.word_count / len(questionSummaries))`
 
     counter2hist(nouns, 'Nouns', outputFolder)
     counter2hist(verbs, 'Verbs', outputFolder)
@@ -126,7 +127,7 @@ def main(morphFileFolder, outputFolder, embeddings_file, positive_words, negatve
     #raw metrics for each question
     sentiment_scores = {}
     for i, q in enumerate(questionSummaries):
-        # Lemma cloud
+
         positive_score = calculate_sentiment_score(q.words, positive_df, e)
         negative_score = calculate_sentiment_score(q.words, negative_df, e)
 
